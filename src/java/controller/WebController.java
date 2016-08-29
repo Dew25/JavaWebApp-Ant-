@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package guessNumber;
+package controller;
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Random;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
+import module.EntityEJB;
+
 
 /**
  *
@@ -18,18 +21,21 @@ import javax.servlet.http.HttpSession;
  */
 @Named(value = "userNamberBean")
 @SessionScoped
-public class UserNamberBean implements Serializable {
+public class WebController implements Serializable {
 
     Integer randomInt;
     Integer userNumber;
     String response;
+    @Inject
+    private EntityEJB entityEJB;
 
     /**
      * Creates a new instance of UserNamberBean
      */
-    public UserNamberBean() {
+    public WebController() {
         Random randomGR = new Random();
-        randomInt = new Integer(randomGR.nextInt(10));
+        Integer randInt =  randomGR.nextInt(10);
+        setRandomInt(randInt);
         System.out.println("Duke's number: " + randomInt);
     }
 
@@ -39,8 +45,11 @@ public class UserNamberBean implements Serializable {
 
     public void setUserNumber(Integer userNumber) {
         this.userNumber = userNumber;
+        entityEJB.setUserNumber(userNumber);
     }
+    
 
+    
     public String getResponse() {
         if ((userNumber != null) && (userNumber.compareTo(randomInt) == 0)) {
 
@@ -55,5 +64,10 @@ public class UserNamberBean implements Serializable {
             return "<p>Sorry, " + userNumber + " isn't it.</p>"
                     + "<p>Guess again...</p>";
         }
+    }
+
+    private void setRandomInt(Integer randomInt) {
+        this.randomInt=randomInt;
+        entityEJB.setDukeNumber(randomInt);
     }
 }
